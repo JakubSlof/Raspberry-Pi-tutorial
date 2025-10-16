@@ -2,9 +2,43 @@
 
 # Vytvoření venv
 
+- hodí se na vašem PC pokud děláte více projektů na Raspberry Pi to není potřeba řešit (pokud je tam jeden projekt, nebo projekty kde se nabijí verze knihoven)
+
+Příkaz co vytvoří virtuální prostření s názvem venv
+
 ```bash
 python -m venv venv
 ```
+
+---
+
+Aktivace virtuálního prostředí (Linux, Mac)
+
+```bash
+source venv/bin/activate
+```
+
+Po aktivaci se v příkazové řádce objeví `(venv)`.
+
+---
+
+Deaktivace prostředí
+
+```bash
+deactivate
+```
+
+---
+
+Zjištění nainstalovaných python knihoven
+
+```bash
+pip list
+```
+
+zobrazí všechny balíčky a jejich verze
+
+---
 
 # Získání fotky z Kamery
 
@@ -138,10 +172,15 @@ Důležité části:
 
 # Autostart programu
 
+zapne daný python program automaticky při zapnutí raspberry pi 
+
+## 1. vytvoření souboru
+
 ```bash
 sudo nano /etc/systemd/system/main.service
-
 ```
+
+## 2. kód pro nastavení automatického startu programu
 
 ```bash
 [Unit]
@@ -153,24 +192,50 @@ ExecStart=/usr/bin/python3 /home/pi/Desktop/main.py
 WorkingDirectory=/home/pi/Desktop
 StandardOutput=inherit
 StandardError=inherit
-Restart=always
+Restart=no
 User=pi
 
 [Install]
 WantedBy=multi-user.target
 ```
 
-```bash
+## 3. Aktivace
 
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable main.service
 ```
 
-WorkingDirectory - složka kde je program 
+po aktivaci se musí raspberry pi restartovat (sudo reboot)
 
-User - tvoje username v terminalu pred zavinacem 
+## 4. další fajn věci
 
-ExecStart=/usr/bin/python3 “tady dej cestu k programu ” (zjistis příkazem realpath a nazev souboru)
+- Zkontroluj, jestli je služba povolená:
+    
+    ```bash
+    systemctl is-enabled main.service
+    ```
+    
+    - když je zapnutá → uvidíš `enabled`
+    - když ne → `disabled`
+- Zkontroluj, jestli běží:
+    
+    ```bash
+    systemctl status main.service
+    ```
+    
+    Tam uvidíš, jestli se spustila, kdy, a jestli proběhl tvůj skript.
+    
+- Zrušení služby
+    
+    ```bash
+    systemctl disable main.service
+    ```
+    
+    zruší autostart 
+    
 
-![image.png](Raspberry%20Pi%20tutorial%2020df934a70d480088441e6aeac0d34b4/image.png)
+---
 
 # Nastaveni hotspotu po zapnuti
 
